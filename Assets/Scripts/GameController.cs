@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour {
 	
     public void SnapCameraToActivePiece()
     {
-        smoothFollowCamera.SetTarget(player.CurrentActive().transform);
+        smoothFollowCamera.SnapToTarget(player.CurrentActive().transform);
     }
 
 	void Update () {

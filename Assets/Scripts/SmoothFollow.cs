@@ -4,42 +4,37 @@ using UnityEngine;
 
 public class SmoothFollow : MonoBehaviour
 {
-    // The target we are following
     private Transform target;
-    Camera mainCamera;
-    public float cameraAcceleration;
+    private int playerDistance = 10;
+
+    public float cameraSnapTime;
+    private float snapTimeElapsed;
 
     void Start()
     {
-        mainCamera = GetComponent<Camera>();
     }
 
-    public void SetTarget(Transform newTarget)
+    public void SnapToTarget(Transform newTarget)
     {
         target = newTarget;
+        snapTimeElapsed = 0f;
     }
-
-    // Place the script in the Camera-Control group in the component menu
-    [AddComponentMenu("Camera-Control/Smooth Follow")]
-
 
     void LateUpdate()
     {
+
         // Early out if we don't have a target
         if (!target) return;
 
-        Vector3 direction = mainCamera.WorldToViewportPoint(target.position);
-        Debug.Log("Position: " + direction);
+        float percentDone = snapTimeElapsed / cameraSnapTime;
+        transform.position = Vector3.Lerp(transform.position,
+                                          target.position - (transform.forward * playerDistance),
+                                          percentDone);
+        snapTimeElapsed += Time.deltaTime;
 
-        Vector3 v3 = transform.forward;
-        v3.y = 0;
-        v3.Normalize();
-
-        Debug.Log("Forward:" + v3);
-
-        //if (v3 != Vector3.zero)
-        //{
-        //    transform.position += v3 * cameraAcceleration * Time.deltaTime;
-        //}
+        if(percentDone > 1)
+        {
+            target = null;
+        }
     }
 }
